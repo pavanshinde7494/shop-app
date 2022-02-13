@@ -8,9 +8,9 @@ export const addToCart =  (product)=>{
     }
 }
 
-export const removeFromCart = (product)=>{
+export const removeFromCart = (productId)=>{
     return{
         type : REMOVE_FROM_CART,
-        product : product
+        pid : productId
     }
 }

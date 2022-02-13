@@ -1,15 +1,24 @@
 import React from 'react'
 import { Button, FlatList, StyleSheet, Text, View } from 'react-native'
 
-import { removeFromCart } from '../../store/actions/cart'
 import { useDispatch, useSelector } from 'react-redux'
+import { removeFromCart } from '../../store/actions/cart'
+import { addOrder } from '../../store/actions/orders'
+
+
+
 import CartItem from '../../components/shop/CartItem'
+import Card from '../../components/UI/Card'
+
 import Colors from '../../constants/Colors'
-export default function () {
+import orders from '../../store/reducers/orders'
+export default function CartScreen(props) {
+
+    const dispatch = useDispatch();
 
     const cartTotalAmount = useSelector((state) => state.cart.totalAmount)
     const cartItems = useSelector((state) => {
-        console.log(state);
+        // console.log(state);
         let transformedCartItems = [];
         for(const key in state.cart.items) {
             transformedCartItems.push({
@@ -20,33 +29,43 @@ export default function () {
                 sum : state.cart.items[key].sum
             });
         }
-        return transformedCartItems;
+        return transformedCartItems.sort((a,b)=>{
+            return a.productId > b.productId
+        });
     })
-    console.log(cartItems);
+    // console.log(cartItems);
 
     return (
         <View style={styles.screen}>
             {/* Summary */}
-            <View style={styles.summary}>
+            <Card style={styles.summary}>
                 <Text style={styles.summaryText}>
-                    Total : <Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
+                    Total : <Text style={styles.amount}>${Math.round(cartTotalAmount.toFixed(2)*100)/100}</Text>
                 </Text>
                 <Button 
                     color={Colors.accent} 
                     title='Order Now' 
                     disabled={ cartItems.length == 0 }
+                    onPress = {()=>{
+                        dispatch(addOrder(cartItems,cartTotalAmount));
+                        props.navigation.navigate('Orders');
+                    }}
                 />
-            </View>
+            </Card>
             
             <FlatList
                 data={cartItems}
                 renderItem = {(itemData)=>{
-                                        console.log(itemData.item);
+                                        // console.log(itemData.item);
                                         return <CartItem 
                                             title = {itemData.item.productTitle} 
                                             quantity = {itemData.item.quantity}
                                             amount = {itemData.item.sum} 
-                                            onRemove = {(itemData)=>{useDispatch(removeFromCart(itemData.item))}}
+                                            deletable = {true}
+                                            onRemove = {()=>{
+                                                // console.log(itemData.item.productId);
+                                                dispatch(removeFromCart(itemData.item.productId))
+                                            }}
                                         />}}
                 keyExtractor = {(item)=>item.productId}
             />
@@ -65,9 +84,6 @@ const styles = StyleSheet.create({
         justifyContent : 'space-between',
         marginBottom :  20,
         padding : 10,
-        elevation : 5,
-        borderRadius : 10,
-        backgroundColor : 'white'
     },
     summaryText : {
         fontFamily : 'open-sans-bold',

@@ -8,12 +8,13 @@ import {
     TouchableNativeFeedback
 } from 'react-native'
 import Colors from '../../constants/Colors'
+import Card from '../UI/Card'
 
 export default function ProductItem(props) {
   return (
-        <View style={styles.product} >
+        <Card style={styles.product} >
             <View style={styles.touchable}>
-                <TouchableNativeFeedback onPress={props.onViewDetails} useForeground>
+                <TouchableNativeFeedback onPress={props.onSelect} useForeground>
                     <View>
                         <View style={styles.imageContainer}>
                             <Image  style={styles.image} source={{uri : props.image}} />
@@ -22,16 +23,13 @@ export default function ProductItem(props) {
                             <Text style={styles.title} >{props.title}</Text>
                             <Text style={styles.price}>${props.price}</Text>
                         </View>
-                        
                         <View style={styles.actions}>
-                            <Button color={Colors.primary} title='View Details' onPress={props.onViewDetails}/>
-                            <Button color={Colors.primary} title='To Cart' onPress={props.onAddToCart}/>
+                            {props.children}
                         </View>
                     </View>
                </TouchableNativeFeedback>
-            </View>
-                
-            </View>
+            </View>        
+        </Card>
     
   )
 }
@@ -39,12 +37,8 @@ export default function ProductItem(props) {
 
 const styles = StyleSheet.create({
     product : {
+        height : 300,
         margin  : 20,
-        elevation : 5,
-        backgroundColor : 'white',
-        borderRadius : 10,
-        overflow : 'hidden',
-        height : 300
         
     },
     touchable : {

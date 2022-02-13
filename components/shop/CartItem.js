@@ -14,17 +14,19 @@ export default function CartItem(props) {
     <View style={styles.cartItem}>
         <View style={styles.itemData}>
             <Text style={styles.quantity}>{props.quantity} </Text> 
-            <Text style={styles.mainText}>{props.title}</Text>
+            <Text style={styles.mainText}>{props.title.length > 12 ? `${props.title.slice(0,12)} ...` : props.title}</Text>
         </View>
         <View style={styles.itemData}>
-            <Text style={styles.mainText}>${props.amount}</Text>
-            <TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
-                <Ionicons 
-                    name="ios-trash" 
-                    size={23} 
-                    color="red" 
-                />
-            </TouchableOpacity>
+            <Text style={styles.mainText}>${props.amount.toFixed(2)}</Text>
+            {props.deletable &&
+                <TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
+                    <Ionicons 
+                        name="ios-trash" 
+                        size={23} 
+                        color="red" 
+                    />
+                </TouchableOpacity>
+            }
         </View>
     </View>
   )
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
     itemData : {
         flexDirection : 'row',
         alignItems : 'center',
-        // justifyContent : 'space-between'
+        justifyContent : 'space-between',
     },
     quantity : {
         fontFamily : 'open-sans',
